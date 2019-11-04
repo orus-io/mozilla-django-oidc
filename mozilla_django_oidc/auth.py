@@ -270,6 +270,8 @@ class OIDCAuthenticationBackend(ModelBackend):
             ),
         }
 
+        token_payload.update(self.get_extra_params(request))
+
         # Get the token
         token_info = self.get_token(token_payload)
         id_token = token_info.get('id_token')
@@ -336,3 +338,6 @@ class OIDCAuthenticationBackend(ModelBackend):
             return self.UserModel.objects.get(pk=user_id)
         except self.UserModel.DoesNotExist:
             return None
+
+    def get_extra_params(self, request):
+        return self.get_settings("OIDC_AUTH_REQUEST_EXTRA_PARAMS", {})
